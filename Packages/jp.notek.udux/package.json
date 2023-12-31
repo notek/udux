@@ -1,0 +1,15 @@
+{
+  "name": "jp.notek.udux",
+  "displayName": "Udux",
+  "version": "0.0.1",
+  "unity": "2022.3",
+  "description": "Flux like architecture for Udon.",
+  "author": {
+    "name": "notoito",
+    "email": "notoito.public+notek@gmail.com",
+    "url": "https://social.nohto.net"
+  },
+  "vpmDependencies": {
+    "com.vrchat.worlds": "^3.5.0"
+  }
+}
