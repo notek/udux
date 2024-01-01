@@ -1,18 +1,17 @@
-using UdonSharp;
-using JP.Notek.Udux;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDK3.Data;
-using VRC.SDKBase;
 
 namespace JP.Notek.Udux
 {
-    public class DispatcherBase : UdonSharpBehaviour
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+    public class Dispatcher : UdonSharpBehaviour
     {
-        [SerializeField] IReduceStore[] Stores;
+        [SerializeField] IReduceStore[] _Stores;
 
         public void Dispatch(string action, DataToken value =  new DataToken())
         {
-            foreach (var store in Stores)
+            foreach (var store in _Stores)
             {
                 store.AddQueue(action, value);
             }

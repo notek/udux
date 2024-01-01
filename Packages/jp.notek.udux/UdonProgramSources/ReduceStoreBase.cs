@@ -1,33 +1,29 @@
-using System;
 using UdonSharp;
 using UnityEngine;
-using VRC.SDK3.Data;
-using VRC.SDKBase;
 
 namespace JP.Notek.Udux
 {
-    public class ReduceStoreBase<ModelT, CurrentStateT, NewStateT> : IReduceStore
-    where ModelT : UdonSharpBehaviour
+    public class ReduceStoreBase<ModelT, CurrentStateT, NewStateT, SyncStateT> : IReduceStore
+    where SyncStateT : SyncStateBase
+    where ModelT : IModel<SyncStateT>
     where CurrentStateT : ModelT
     where NewStateT : ModelT
     {
         public NewStateT NewState;
         [SerializeField] protected CurrentStateT _CurrentState;
+        [SerializeField] protected SyncStateT _SyncState;
         protected IStoreObservable<ModelT>[] Views = { };
 
         protected virtual void Reset()
         {
             // NewState = GetComponent<NewStateT>();
             // _CurrentState = GetComponent<CurrentStateT>();
+            // _SyncState = GetComponent<SyncStateT>();
         }
 
-        public virtual void SubscribeOnChange(IStoreObservable<ModelT> view) {
-            // Views = Views.Add(view);
-        }
-
-        protected void TakeStateOwnership(UdonSharpBehaviour newState)
+        public virtual void SubscribeOnChange(IStoreObservable<ModelT> view)
         {
-            Networking.SetOwner(Networking.LocalPlayer, newState.gameObject);
+            // Views = Views.Add(view);
         }
     }
 }

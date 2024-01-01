@@ -2,9 +2,10 @@ using UdonSharp;
 
 namespace JP.Notek.Udux
 {
-    public class IStoreObservable<StoreT> : UdonSharpBehaviour
-    where StoreT : UdonSharpBehaviour
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+    public class IStoreObservable<ModelT> : UdonSharpBehaviour
+    where ModelT : UdonSharpBehaviour
     {
-        public virtual void OnChange(StoreT currentState, StoreT newState) { }
+        public virtual void OnChange(ModelT currentState, ModelT newState) { }
     }
 }
