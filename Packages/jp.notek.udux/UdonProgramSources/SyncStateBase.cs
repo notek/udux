@@ -10,7 +10,7 @@ namespace JP.Notek.Udux
         public bool Initialized = false;
         public VRCPlayerApi Owner { get { return GetOwner(); } }
         public bool IsOwner { get { return GetIsOwner(); } }
-        public float Latency = float.PositiveInfinity;
+        public float OwnerTimeDifference = float.PositiveInfinity;
 
         [UdonSynced] float _SyncTime;
         [UdonSynced] float _SyncTimeId;
@@ -22,21 +22,18 @@ namespace JP.Notek.Udux
         {
             if (IsOwner)
             {
-                SetLatency();
+                SetOwnerTimeDifference();
                 if (_StoreSubscribed != null)
-                    _StoreSubscribed.OnSyncStateDeserialization();
+                    _StoreSubscribed.OnSyncStateChanged();
             }
         }
 
-        public float TakeOwnership()
+        public void TakeOwnership()
         {
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
-            SetLatency();
-            RequestSerialization();
-            return Latency;
         }
 
-        public void SubscribeOnDeserialization(IReduceStore store)
+        public void Subscribe(IReduceStore store)
         {
             _StoreSubscribed = store;
         }
@@ -46,10 +43,16 @@ namespace JP.Notek.Udux
             Initialized = true;
             if (_SyncTimeIdLocal != _SyncTimeId)
             {
-                GetLatency();
+                GetOwnerTimeDifference();
             }
             if (_StoreSubscribed != null)
-                _StoreSubscribed.OnSyncStateDeserialization();
+                _StoreSubscribed.OnSyncStateChanged();
+        }
+
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
+        {
+            if (_StoreSubscribed != null)
+                _StoreSubscribed.OnSyncStateOwnershipTransferred();
         }
 
         public override void OnPlayerJoined(VRCPlayerApi player)
@@ -60,26 +63,28 @@ namespace JP.Notek.Udux
             }
         }
 
-        new public void RequestSerialization()
+        new public float RequestSerialization()
         {
             if (Time.frameCount - _LatencySyncedFrame > _LatencySyncFrameDuration)
-                SetLatency();
+                SetOwnerTimeDifference();
             base.RequestSerialization();
+            return OwnerTimeDifference;
         }
 
-        private void SetLatency()
+        public float SetOwnerTimeDifference()
         {
             _SyncTimeId = Random.value;
             _SyncTimeIdLocal = _SyncTimeId;
             _SyncTime = Time.time;
             _LatencySyncedFrame = Time.frameCount;
-            Latency = 0;
+            OwnerTimeDifference = 0;
+            return OwnerTimeDifference;
         }
 
-        private void GetLatency()
+        private void GetOwnerTimeDifference()
         {
             _SyncTimeIdLocal = _SyncTimeId;
-            Latency = Time.time - _SyncTime;
+            OwnerTimeDifference = Time.time - _SyncTime;
         }
 
         private VRCPlayerApi GetOwner()

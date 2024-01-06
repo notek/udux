@@ -13,7 +13,9 @@ namespace JP.Notek.Udux
         VRCUrl[] _VRCUrlQueueValue = { };
         protected bool _IsStateDistributing = false;
         protected int _StateDistributingI = 0;
-        protected bool _HasNewSyncState = false;
+
+        protected const string _OnOwnershipTransferredAction = "__INTERNAL__.OnOwnerShipTransferred";
+        protected const string _OnSyncStateChangedAction = "__INTERNAL__.OnSyncStateChanged";
 
         public virtual void Update()
         {
@@ -44,9 +46,16 @@ namespace JP.Notek.Udux
             _VRCUrlQueueValue = _VRCUrlQueueValue.Add(value);
         }
 
-        public void OnSyncStateDeserialization()
+        public void OnSyncStateChanged()
         {
-            _HasNewSyncState = true;
+            _QueueAction = _QueueAction.Add(_OnSyncStateChangedAction);
+            _QueueValue = _QueueValue.Add(new DataToken());
+        }
+
+        public void OnSyncStateOwnershipTransferred()
+        {
+            _QueueAction = _QueueAction.Add(_OnOwnershipTransferredAction);
+            _QueueValue = _QueueValue.Add(new DataToken());
         }
 
         public virtual void Reduce(string action, DataToken value) { }
