@@ -1,0 +1,21 @@
+{
+    "name": "JP.Notek.Udux.Sample",
+    "rootNamespace": "",
+    "references": [
+        "UdonSharp.Runtime",
+        "JP.Notek.Udux"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "VRCSDKBase.dll",
+        "VRCSDK3.dll",
+        "VRC.Udon.Common.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
