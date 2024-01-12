@@ -243,7 +243,7 @@ MonoBehaviour:
   OwnerTimeDifference: Infinity
   _LatencySyncFrameDuration: 1000
   index: 0
-  UserId: 0
+  UserId: -1
   Value2: 0
   Value3: 0
 --- !u!1001 &258347350
@@ -537,7 +537,7 @@ MonoBehaviour:
   OwnerTimeDifference: Infinity
   _LatencySyncFrameDuration: 1000
   index: 0
-  UserId: 0
+  UserId: -1
   Value2: 0
   Value3: 0
 --- !u!1 &881310513
@@ -994,7 +994,7 @@ MonoBehaviour:
   OwnerTimeDifference: Infinity
   _LatencySyncFrameDuration: 1000
   index: 0
-  UserId: 0
+  UserId: -1
   Value2: 0
   Value3: 0
 --- !u!1 &1444802140
@@ -1456,7 +1456,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
-  _syncMethod: 0
+  _syncMethod: 2
   serializedProgramAsset: {fileID: 11400000, guid: ec085c0c375a3de49a02757fa0a6c803,
     type: 2}
   programSource: {fileID: 11400000, guid: 3527fe86d4cc055468e7a0c75f9a1f9f, type: 2}
