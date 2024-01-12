@@ -16,6 +16,9 @@ namespace JP.Notek.Udux
 
         protected const string _OnOwnershipTransferredAction = "__INTERNAL__.OnOwnerShipTransferred";
         protected const string _OnSyncStateChangedAction = "__INTERNAL__.OnSyncStateChanged";
+        protected const string _OnIndividualSyncStateOwnershipGivenAction = "__INTERNAL__.OnIndividualSyncStateOwnerShipGiven";
+        protected const string _OnIndividualSyncStateOwnershipTransferredAction = "__INTERNAL__.OnIndividualSyncStateOwnerShipTransferred";
+        protected const string _OnIndividualSyncStateChangedAction = "__INTERNAL__.OnIndividualSyncStateChanged";
 
         public virtual void Update()
         {
@@ -56,6 +59,27 @@ namespace JP.Notek.Udux
         {
             _QueueAction = _QueueAction.Add(_OnOwnershipTransferredAction);
             _QueueValue = _QueueValue.Add(new DataToken());
+        }
+        public void OnIndividualSyncStateChanged(int syncStateIndex)
+        {
+            _QueueAction = _QueueAction.Add(_OnIndividualSyncStateChangedAction);
+            var d = new DataDictionary();
+            d["syncStateIndex"] = syncStateIndex;
+            _QueueValue = _QueueValue.Add(d);
+        }
+        public void OnIndividualSyncStateOwnershipTransferred(int syncStateIndex)
+        {
+            _QueueAction = _QueueAction.Add(_OnIndividualSyncStateOwnershipTransferredAction);
+            var d = new DataDictionary();
+            d["syncStateIndex"] = syncStateIndex;
+            _QueueValue = _QueueValue.Add(d);
+        }
+        public void OnIndividualSyncStateOwnershipGiven(int syncStateIndex)
+        {
+            _QueueAction = _QueueAction.Add(_OnIndividualSyncStateOwnershipGivenAction);
+            var d = new DataDictionary();
+            d["syncStateIndex"] = syncStateIndex;
+            _QueueValue = _QueueValue.Add(d);
         }
 
         public virtual void Reduce(string action, DataToken value) { }

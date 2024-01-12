@@ -3,5 +3,5 @@ using UdonSharp;
 namespace JP.Notek.Udux
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class NoSyncState : SyncStateBase { }
+    public class NoSyncState : ISyncState { }
 }
