@@ -47,7 +47,11 @@ namespace UduxSample
 
         public ExampleModelIndividualSyncState GetMySyncState()
         {
-            return _SyncStateProvider.SyncStates[_SyncStateProvider.MySyncStateIndex];
+            return GetSyncState(_SyncStateProvider.MySyncStateIndex);
+        }
+        public ExampleModelIndividualSyncState GetSyncState(int index)
+        {
+            return (ExampleModelIndividualSyncState)_SyncStateProvider.SyncStates[index];
         }
 
         public override void Reduce(string action, DataToken value)
@@ -75,12 +79,12 @@ namespace UduxSample
                 case _OnIndividualSyncStateChangedAction:
                     var __syncStateIndex = (int)((DataDictionary)value)["syncStateIndex"];
                     if(_CurrentState.SubscribedStateIndex == __syncStateIndex)
-                        NewState.ReflectSyncState(_SyncStateProvider.SyncStates[__syncStateIndex]);
+                        NewState.ReflectSyncState(GetSyncState(__syncStateIndex));
                     break;
                 case _OnIndividualSyncStateOwnershipTransferredAction:
                     var ___syncStateIndex = (int)((DataDictionary)value)["syncStateIndex"];
                     if(_CurrentState.SubscribedStateIndex == ___syncStateIndex)
-                        NewState.ReflectSyncState(_SyncStateProvider.SyncStates[___syncStateIndex]);
+                        NewState.ReflectSyncState(GetSyncState(___syncStateIndex));
                     break;
                 default:
                     return;

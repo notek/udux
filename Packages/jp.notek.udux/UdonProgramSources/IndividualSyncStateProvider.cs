@@ -7,10 +7,9 @@ using VRC.SDKBase;
 namespace JP.Notek.Udux
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public class IndividualSyncStateProvider<T> : IIndividualSyncStateObservable
-    where T : IndividualSyncStateBase
+    public class IndividualSyncStateProvider : IIndividualSyncStateObservable
     {
-        [SerializeField] public T[] SyncStates;
+        [SerializeField] public IndividualSyncStateBase[] SyncStates;
         public int MySyncStateIndex = -1;
         IReduceStore _StoreSubscribed = null;
 
@@ -18,8 +17,8 @@ namespace JP.Notek.Udux
         {
             for (int i = 0; i < SyncStates.Length; i++)
             {
-                ((IndividualSyncStateBase[])SyncStates)[i].index = i;
-                ((IndividualSyncStateBase[])SyncStates)[i].Subscribe(this);
+                SyncStates[i].index = i;
+                SyncStates[i].Subscribe(this);
             }
         }
 
@@ -32,7 +31,7 @@ namespace JP.Notek.Udux
         {
             for (int i = 0; i < SyncStates.Length; i++)
             {
-                if (((IndividualSyncStateBase[])SyncStates)[i].UserId == userId)
+                if (SyncStates[i].UserId == userId)
                     return i;
             }
             return -1;
@@ -43,7 +42,7 @@ namespace JP.Notek.Udux
             int[] availables = {};
             for (int i = 0; i < SyncStates.Length; i++)
             {
-                if (((IndividualSyncStateBase[])SyncStates)[i].UserId != -1)
+                if (SyncStates[i].UserId != -1)
                     availables.Add(i);
             }
             return availables;
@@ -104,7 +103,7 @@ namespace JP.Notek.Udux
                 {
                     if (syncState.UserId == -1)
                     {
-                        syncState.SetUser(Networking.LocalPlayer);
+                        syncState.SetUser(player);
                         break;
                     }
                 }

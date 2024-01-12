@@ -11,7 +11,7 @@ namespace JP.Notek.Udux
     {
         public NewStateT NewState;
         [SerializeField] protected CurrentStateT _CurrentState;
-        [SerializeField] protected IndividualSyncStateProvider<SyncStateT> _SyncStateProvider;
+        [SerializeField] protected IndividualSyncStateProvider _SyncStateProvider;
         protected IStoreObservable<ModelT>[] Views = { };
 
         protected virtual void Reset()

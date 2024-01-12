@@ -500,8 +500,7 @@ MonoBehaviour:
       Data: 28|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: JP.Notek.Udux.IndividualSyncStateProvider`1[[UduxSample.ExampleModelIndividualSyncState,
-        JP.Notek.Udux.Sample]], JP.Notek.Udux
+      Data: JP.Notek.Udux.IndividualSyncStateProvider, JP.Notek.Udux
     - Name: 
       Entry: 8
       Data: 

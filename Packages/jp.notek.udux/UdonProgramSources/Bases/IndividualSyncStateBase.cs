@@ -8,7 +8,7 @@ namespace JP.Notek.Udux
     public class IndividualSyncStateBase : ISyncState
     {
         public int index;
-        [UdonSynced] public int UserId;
+        [UdonSynced] public int UserId = -1;
         IIndividualSyncStateObservable _Provider = null;
         public virtual void Init() { }
 
