@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "UdonSharp.Runtime",
-        "JP.Notek.Udux"
+        "JP.Notek.Udux",
+        "VRC.Udon.Serialization.OdinSerializer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
