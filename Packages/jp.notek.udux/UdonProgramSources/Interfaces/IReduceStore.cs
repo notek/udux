@@ -9,18 +9,24 @@ namespace JP.Notek.Udux
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class IReduceStore : UdonSharpBehaviour
     {
-        bool[] _QueueHasValue = new bool[16];
-        string[] _QueueAction = new string[16];
-        DataToken[] _QueueValue = new DataToken[16];
-        bool[] _VRCUrlQueueHasValue = new bool[16];
-        string[] _VRCUrlQueueAction = new string[16];
-        VRCUrl[] _VRCUrlQueueValue = new VRCUrl[16];
-        int _QueueLength = 16;
+        bool[] _QueueHasValue = new bool[32];
+        string[] _QueueAction = new string[32];
+        DataToken[] _QueueValue = new DataToken[32];
+        bool[] _VRCUrlQueueHasValue = new bool[32];
+        string[] _VRCUrlQueueAction = new string[32];
+        VRCUrl[] _VRCUrlQueueValue = new VRCUrl[32];
+        int _QueueLength = 32;
         int _QueueReadHead = 0;
         int _QueueWriteHead = 0;
         protected bool _IsStateDistributing = false;
         protected int _StateDistributingI = 0;
+
+        // 値変更の配布をスキップ可能にする
         protected bool _OmitDistribution = false;
+
+        // _OmitDistribution == trueのとき1フレームで処理するイベントの数。
+        //Reduceの処理量が多い場合この数値が大きいとfps低下を招く。この数値が小さいと処理の遅延が大きくなる。
+        protected int _ProcessingUnit = 32;
 
         protected const string _OnOwnershipTransferredAction = "__INTERNAL__.OnOwnerShipTransferred";
         protected const string _OnSyncStateChangedAction = "__INTERNAL__.OnSyncStateChanged";
@@ -33,11 +39,13 @@ namespace JP.Notek.Udux
             if (_IsStateDistributing)
                 return;
 
-            var nextHead = (_QueueReadHead + 1) % _QueueLength;
-            var queueHasValue = _QueueHasValue[_QueueReadHead];
-            var vRCUrlQueueHasValue = _VRCUrlQueueHasValue[_QueueReadHead];
-            if (queueHasValue || vRCUrlQueueHasValue)
+            for (int i = 0; i < (_OmitDistribution ? _ProcessingUnit : 1); i++)
             {
+                var queueHasValue = _QueueHasValue[_QueueReadHead];
+                var vRCUrlQueueHasValue = _VRCUrlQueueHasValue[_QueueReadHead];
+                if (!queueHasValue && !vRCUrlQueueHasValue)
+                    break;
+
                 if (queueHasValue)
                 {
                     Reduce(_QueueAction[_QueueReadHead], _QueueValue[_QueueReadHead]);
@@ -48,6 +56,7 @@ namespace JP.Notek.Udux
                     Reduce(_VRCUrlQueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
                     _VRCUrlQueueHasValue[_QueueReadHead] = false;
                 }
+                var nextHead = (_QueueReadHead + 1) % _QueueLength;
                 _IsStateDistributing = !_OmitDistribution || (!_QueueHasValue[nextHead] && !_VRCUrlQueueHasValue[nextHead]);
                 _QueueReadHead = nextHead;
             }
@@ -57,7 +66,7 @@ namespace JP.Notek.Udux
         {
             if (_QueueHasValue[_QueueWriteHead] || _VRCUrlQueueHasValue[_QueueWriteHead])
             {
-                ScaleQueue();
+                RescaleQueue();
             }
             _QueueHasValue[_QueueWriteHead] = true;
             _QueueAction[_QueueWriteHead] = action;
@@ -69,7 +78,7 @@ namespace JP.Notek.Udux
         {
             if (_QueueHasValue[_QueueWriteHead] || _VRCUrlQueueHasValue[_QueueWriteHead])
             {
-                ScaleQueue();
+                RescaleQueue();
             }
             _VRCUrlQueueHasValue[_QueueWriteHead] = true;
             _VRCUrlQueueAction[_QueueWriteHead] = action;
@@ -108,7 +117,19 @@ namespace JP.Notek.Udux
 
         public virtual void Reduce(string action, DataToken value) { }
         public virtual void Reduce(string action, VRCUrl value) { }
-        void ScaleQueue()
+        protected void InitQueue(int queueLength)
+        {
+            _QueueHasValue = new bool[queueLength];
+            _QueueAction = new string[queueLength];
+            _QueueValue = new DataToken[queueLength];
+            _VRCUrlQueueHasValue = new bool[queueLength];
+            _VRCUrlQueueAction = new string[queueLength];
+            _VRCUrlQueueValue = new VRCUrl[queueLength];
+
+            _QueueLength = queueLength;
+        }
+
+        void RescaleQueue()
         {
             int queueLength = _QueueLength * 2;
 
