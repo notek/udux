@@ -1,3 +1,4 @@
+using System;
 using UdonSharp;
 using VRC.SDK3.Data;
 using VRC.SDKBase;
@@ -7,10 +8,15 @@ namespace JP.Notek.Udux
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class IReduceStore : UdonSharpBehaviour
     {
-        string[] _QueueAction = { };
-        DataToken[] _QueueValue = { };
-        string[] _VRCUrlQueueAction = { };
-        VRCUrl[] _VRCUrlQueueValue = { };
+        bool[] _QueueHasValue = new bool[16];
+        string[] _QueueAction = new string[16];
+        DataToken[] _QueueValue = new DataToken[16];
+        bool[] _VRCUrlQueueHasValue = new bool[16];
+        string[] _VRCUrlQueueAction = new string[16];
+        VRCUrl[] _VRCUrlQueueValue = new VRCUrl[16];
+        int _QueueLength = 16;
+        int _QueueReadHead = 0;
+        int _QueueWriteHead = 0;
         protected bool _IsStateDistributing = false;
         protected int _StateDistributingI = 0;
 
@@ -25,61 +31,135 @@ namespace JP.Notek.Udux
             if (_IsStateDistributing)
                 return;
 
-            if (_QueueAction.Length != 0)
+            if (_QueueHasValue[_QueueReadHead])
             {
-                Reduce(_QueueAction.Pop(out _QueueAction), _QueueValue.Pop(out _QueueValue));
+                Reduce(_QueueAction[_QueueReadHead], _QueueValue[_QueueReadHead]);
                 _IsStateDistributing = true;
+                _QueueHasValue[_QueueReadHead] = false;
+                _QueueReadHead = (_QueueReadHead + 1) % _QueueLength;
             }
-            if (_VRCUrlQueueAction.Length != 0)
+            else if (_VRCUrlQueueHasValue[_QueueReadHead])
             {
-                Reduce(_VRCUrlQueueAction.Pop(out _VRCUrlQueueAction), _VRCUrlQueueValue.Pop(out _VRCUrlQueueValue));
+                Reduce(_VRCUrlQueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
                 _IsStateDistributing = true;
+                _VRCUrlQueueHasValue[_QueueReadHead] = false;
+                _QueueReadHead = (_QueueReadHead + 1) % _QueueLength;
             }
         }
 
         public void AddQueue(string action, DataToken value)
         {
-            _QueueAction = _QueueAction.Add(action);
-            _QueueValue = _QueueValue.Add(value);
+            if (_QueueHasValue[_QueueWriteHead] || _VRCUrlQueueHasValue[_QueueWriteHead])
+            {
+                int queueLength = _QueueLength * 2;
+
+                bool[] queueHasValue = new bool[queueLength];
+                string[] queueAction = new string[queueLength];
+                DataToken[] queueValue = new DataToken[queueLength];
+                bool[] vRCUrlQueueHasValue = new bool[queueLength];
+                string[] vRCUrlQueueAction = new string[queueLength];
+                VRCUrl[] vRCUrlQueueValue = new VRCUrl[queueLength];
+
+                Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
+                Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_QueueAction, 0, queueAction, 0, _QueueWriteHead);
+                Array.Copy(_QueueAction, _QueueWriteHead, queueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_QueueValue, 0, queueValue, 0, _QueueWriteHead);
+                Array.Copy(_QueueValue, _QueueWriteHead, queueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueHasValue, 0, vRCUrlQueueHasValue, 0, _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueHasValue, _QueueWriteHead, vRCUrlQueueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueAction, 0, vRCUrlQueueAction, 0, _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueAction, _QueueWriteHead, vRCUrlQueueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueValue, 0, vRCUrlQueueValue, 0, _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueValue, _QueueWriteHead, vRCUrlQueueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+
+                _QueueHasValue = queueHasValue;
+                _QueueAction = queueAction;
+                _QueueValue = queueValue;
+                _VRCUrlQueueHasValue = vRCUrlQueueHasValue;
+                _VRCUrlQueueAction = vRCUrlQueueAction;
+                _VRCUrlQueueValue = vRCUrlQueueValue;
+
+                if (_QueueReadHead >= _QueueWriteHead)
+                    _QueueReadHead += _QueueLength;
+                _QueueLength = queueLength;
+            }
+            _QueueHasValue[_QueueWriteHead] = true;
+            _QueueAction[_QueueWriteHead] = action;
+            _QueueValue[_QueueWriteHead] = value;
+            _QueueWriteHead = (_QueueWriteHead + 1) % _QueueLength;
         }
 
         public void AddQueue(string action, VRCUrl value)
         {
-            _VRCUrlQueueAction = _VRCUrlQueueAction.Add(action);
-            _VRCUrlQueueValue = _VRCUrlQueueValue.Add(value);
+            if (_QueueHasValue[_QueueWriteHead] || _VRCUrlQueueHasValue[_QueueWriteHead])
+            {
+                int queueLength = _QueueLength * 2;
+
+                bool[] queueHasValue = new bool[queueLength];
+                string[] queueAction = new string[queueLength];
+                DataToken[] queueValue = new DataToken[queueLength];
+                bool[] vRCUrlQueueHasValue = new bool[queueLength];
+                string[] vRCUrlQueueAction = new string[queueLength];
+                VRCUrl[] vRCUrlQueueValue = new VRCUrl[queueLength];
+
+                Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
+                Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_QueueAction, 0, queueAction, 0, _QueueWriteHead);
+                Array.Copy(_QueueAction, _QueueWriteHead, queueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_QueueValue, 0, queueValue, 0, _QueueWriteHead);
+                Array.Copy(_QueueValue, _QueueWriteHead, queueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueHasValue, 0, vRCUrlQueueHasValue, 0, _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueHasValue, _QueueWriteHead, vRCUrlQueueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueAction, 0, vRCUrlQueueAction, 0, _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueAction, _QueueWriteHead, vRCUrlQueueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueValue, 0, vRCUrlQueueValue, 0, _QueueWriteHead);
+                Array.Copy(_VRCUrlQueueValue, _QueueWriteHead, vRCUrlQueueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
+
+                _QueueHasValue = queueHasValue;
+                _QueueAction = queueAction;
+                _QueueValue = queueValue;
+                _VRCUrlQueueHasValue = vRCUrlQueueHasValue;
+                _VRCUrlQueueAction = vRCUrlQueueAction;
+                _VRCUrlQueueValue = vRCUrlQueueValue;
+
+                if (_QueueReadHead >= _QueueWriteHead)
+                    _QueueReadHead += _QueueLength;
+                _QueueLength = queueLength;
+            }
+            _VRCUrlQueueHasValue[_QueueWriteHead] = true;
+            _VRCUrlQueueAction[_QueueWriteHead] = action;
+            _VRCUrlQueueValue[_QueueWriteHead] = value;
+            _QueueWriteHead = (_QueueWriteHead + 1) % _QueueLength;
         }
 
         public void OnSyncStateChanged()
         {
-            _QueueAction = _QueueAction.Add(_OnSyncStateChangedAction);
-            _QueueValue = _QueueValue.Add(new DataToken());
+            AddQueue(_OnSyncStateChangedAction, new DataToken());
         }
 
         public void OnSyncStateOwnershipTransferred()
         {
-            _QueueAction = _QueueAction.Add(_OnOwnershipTransferredAction);
-            _QueueValue = _QueueValue.Add(new DataToken());
+            AddQueue(_OnOwnershipTransferredAction, new DataToken());
         }
         public void OnIndividualSyncStateChanged(int syncStateIndex)
         {
-            _QueueAction = _QueueAction.Add(_OnIndividualSyncStateChangedAction);
             var d = new DataDictionary();
             d["syncStateIndex"] = syncStateIndex;
-            _QueueValue = _QueueValue.Add(d);
+            AddQueue(_OnIndividualSyncStateChangedAction, d);
         }
         public void OnIndividualSyncStateOwnershipTransferred(int syncStateIndex)
         {
-            _QueueAction = _QueueAction.Add(_OnIndividualSyncStateOwnershipTransferredAction);
             var d = new DataDictionary();
             d["syncStateIndex"] = syncStateIndex;
             _QueueValue = _QueueValue.Add(d);
+            AddQueue(_OnIndividualSyncStateOwnershipTransferredAction, d);
         }
         public void OnIndividualSyncStateOwnershipGiven(int syncStateIndex)
         {
-            _QueueAction = _QueueAction.Add(_OnIndividualSyncStateOwnershipGivenAction);
             var d = new DataDictionary();
             d["syncStateIndex"] = syncStateIndex;
-            _QueueValue = _QueueValue.Add(d);
+            AddQueue(_OnIndividualSyncStateOwnershipGivenAction, d);
         }
 
         public virtual void Reduce(string action, DataToken value) { }
