@@ -23,8 +23,18 @@ namespace JP.Notek.Udux
         public void SetUser(VRCPlayerApi player)
         {
             UserId = player.playerId;
-            base.RequestSerialization();
-            Networking.SetOwner(player, gameObject);
+            if (player == Networking.GetOwner(gameObject))
+            {
+                Init();
+                SetOwnerTimeDifference();
+                base.RequestSerialization();
+                _Provider.OnIndividualSyncStateOwnershipGiven(index);
+            }
+            else
+            {
+                base.RequestSerialization();
+                Networking.SetOwner(player, gameObject);
+            }
         }
 
         public void UnsetUser()
