@@ -28,5 +28,31 @@ namespace UduxSample
         {
             _Dispatcher.OnTestActionC();
         }
+        public void OnButtonEventClearPressed()
+        {
+            _Dispatcher.OnTestActionD();
+        }
+        public void OnButtonEventMixPressed()
+        {
+            _Dispatcher.OnTestActionA();
+            _Dispatcher.OnTestActionB();
+            _Dispatcher.OnTestActionC();
+            _Dispatcher.OnTestActionD();
+            _Dispatcher.OnTestActionA();
+            _Dispatcher.OnTestActionB();
+            _Dispatcher.OnTestActionC();
+            _Dispatcher.OnTestActionD();
+            _Dispatcher.OnTestActionA();
+            _Dispatcher.OnTestActionB();
+            _Dispatcher.OnTestActionC();
+            _Dispatcher.OnTestActionD();
+            _Dispatcher.OnTestActionA();
+            _Dispatcher.OnTestActionB();
+            _Dispatcher.OnTestActionC();
+            _Dispatcher.OnTestActionD();
+
+            _Dispatcher.OnTestActionA();
+            _Dispatcher.OnTestActionC();
+        }
     }
 }

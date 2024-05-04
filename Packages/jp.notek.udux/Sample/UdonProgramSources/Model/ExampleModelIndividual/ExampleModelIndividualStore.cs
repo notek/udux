@@ -97,6 +97,12 @@ namespace UduxSample
                     NewState.Value3 = true;
                     GetMySyncState().ReflectLocalState(NewState);
                     break;
+                case "OnTestActionD":
+                    NewState.Value1 = false;
+                    NewState.Value2 = false;
+                    NewState.Value3 = false;
+                    GetMySyncState().ReflectLocalState(NewState);
+                    break;
                 default:
                     return;
             }

@@ -53,8 +53,7 @@ namespace UduxSample
                     NewState.Value1 = true;
                     break;
                 case "OnTestActionB":
-                    NewState.Value2 = false;
-                    NewState.Value3 = false;
+                    NewState.Value2 = true;
                     _SyncState.ReflectLocalState(NewState);
                     break;
                 case "OnOwnershipRequested":
@@ -78,6 +77,14 @@ namespace UduxSample
             switch (action)
             {
                 case "OnTestActionC":
+                    NewState.Value3 = true;
+                    _SyncState.ReflectLocalState(NewState);
+                    break;
+                case "OnTestActionD":
+                    NewState.Value1 = false;
+                    NewState.Value2 = false;
+                    NewState.Value3 = false;
+                    _SyncState.ReflectLocalState(NewState);
                     break;
                 default:
                     return;

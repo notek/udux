@@ -1,5 +1,6 @@
 ﻿using JP.Notek.Udux;
 using VRC.SDK3.Data;
+using VRC.SDKBase;
 
 namespace UduxSample
 {
@@ -15,7 +16,11 @@ namespace UduxSample
         }
         public static void OnTestActionC(this Dispatcher dispatcher)
         {
-            dispatcher.Dispatch("OnTestActionC", new DataToken());
+            dispatcher.Dispatch("OnTestActionC", VRCUrl.Empty);
+        }
+        public static void OnTestActionD(this Dispatcher dispatcher)
+        {
+            dispatcher.Dispatch("OnTestActionD", VRCUrl.Empty);
         }
     }
 }
