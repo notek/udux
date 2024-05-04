@@ -1,5 +1,6 @@
 using System;
 using UdonSharp;
+using UnityEngine;
 using VRC.SDK3.Data;
 using VRC.SDKBase;
 
@@ -51,38 +52,7 @@ namespace JP.Notek.Udux
         {
             if (_QueueHasValue[_QueueWriteHead] || _VRCUrlQueueHasValue[_QueueWriteHead])
             {
-                int queueLength = _QueueLength * 2;
-
-                bool[] queueHasValue = new bool[queueLength];
-                string[] queueAction = new string[queueLength];
-                DataToken[] queueValue = new DataToken[queueLength];
-                bool[] vRCUrlQueueHasValue = new bool[queueLength];
-                string[] vRCUrlQueueAction = new string[queueLength];
-                VRCUrl[] vRCUrlQueueValue = new VRCUrl[queueLength];
-
-                Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
-                Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_QueueAction, 0, queueAction, 0, _QueueWriteHead);
-                Array.Copy(_QueueAction, _QueueWriteHead, queueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_QueueValue, 0, queueValue, 0, _QueueWriteHead);
-                Array.Copy(_QueueValue, _QueueWriteHead, queueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueHasValue, 0, vRCUrlQueueHasValue, 0, _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueHasValue, _QueueWriteHead, vRCUrlQueueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueAction, 0, vRCUrlQueueAction, 0, _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueAction, _QueueWriteHead, vRCUrlQueueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueValue, 0, vRCUrlQueueValue, 0, _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueValue, _QueueWriteHead, vRCUrlQueueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-
-                _QueueHasValue = queueHasValue;
-                _QueueAction = queueAction;
-                _QueueValue = queueValue;
-                _VRCUrlQueueHasValue = vRCUrlQueueHasValue;
-                _VRCUrlQueueAction = vRCUrlQueueAction;
-                _VRCUrlQueueValue = vRCUrlQueueValue;
-
-                if (_QueueReadHead >= _QueueWriteHead)
-                    _QueueReadHead += _QueueLength;
-                _QueueLength = queueLength;
+                ScaleQueue();
             }
             _QueueHasValue[_QueueWriteHead] = true;
             _QueueAction[_QueueWriteHead] = action;
@@ -94,38 +64,7 @@ namespace JP.Notek.Udux
         {
             if (_QueueHasValue[_QueueWriteHead] || _VRCUrlQueueHasValue[_QueueWriteHead])
             {
-                int queueLength = _QueueLength * 2;
-
-                bool[] queueHasValue = new bool[queueLength];
-                string[] queueAction = new string[queueLength];
-                DataToken[] queueValue = new DataToken[queueLength];
-                bool[] vRCUrlQueueHasValue = new bool[queueLength];
-                string[] vRCUrlQueueAction = new string[queueLength];
-                VRCUrl[] vRCUrlQueueValue = new VRCUrl[queueLength];
-
-                Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
-                Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_QueueAction, 0, queueAction, 0, _QueueWriteHead);
-                Array.Copy(_QueueAction, _QueueWriteHead, queueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_QueueValue, 0, queueValue, 0, _QueueWriteHead);
-                Array.Copy(_QueueValue, _QueueWriteHead, queueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueHasValue, 0, vRCUrlQueueHasValue, 0, _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueHasValue, _QueueWriteHead, vRCUrlQueueHasValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueAction, 0, vRCUrlQueueAction, 0, _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueAction, _QueueWriteHead, vRCUrlQueueAction, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueValue, 0, vRCUrlQueueValue, 0, _QueueWriteHead);
-                Array.Copy(_VRCUrlQueueValue, _QueueWriteHead, vRCUrlQueueValue, _QueueWriteHead, _QueueLength - _QueueWriteHead);
-
-                _QueueHasValue = queueHasValue;
-                _QueueAction = queueAction;
-                _QueueValue = queueValue;
-                _VRCUrlQueueHasValue = vRCUrlQueueHasValue;
-                _VRCUrlQueueAction = vRCUrlQueueAction;
-                _VRCUrlQueueValue = vRCUrlQueueValue;
-
-                if (_QueueReadHead >= _QueueWriteHead)
-                    _QueueReadHead += _QueueLength;
-                _QueueLength = queueLength;
+                ScaleQueue();
             }
             _VRCUrlQueueHasValue[_QueueWriteHead] = true;
             _VRCUrlQueueAction[_QueueWriteHead] = action;
@@ -164,5 +103,40 @@ namespace JP.Notek.Udux
 
         public virtual void Reduce(string action, DataToken value) { }
         public virtual void Reduce(string action, VRCUrl value) { }
+        void ScaleQueue()
+        {
+            int queueLength = _QueueLength * 2;
+
+            bool[] queueHasValue = new bool[queueLength];
+            string[] queueAction = new string[queueLength];
+            DataToken[] queueValue = new DataToken[queueLength];
+            bool[] vRCUrlQueueHasValue = new bool[queueLength];
+            string[] vRCUrlQueueAction = new string[queueLength];
+            VRCUrl[] vRCUrlQueueValue = new VRCUrl[queueLength];
+
+            Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
+            Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+            Array.Copy(_QueueAction, 0, queueAction, 0, _QueueWriteHead);
+            Array.Copy(_QueueAction, _QueueWriteHead, queueAction, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+            Array.Copy(_QueueValue, 0, queueValue, 0, _QueueWriteHead);
+            Array.Copy(_QueueValue, _QueueWriteHead, queueValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+            Array.Copy(_VRCUrlQueueHasValue, 0, vRCUrlQueueHasValue, 0, _QueueWriteHead);
+            Array.Copy(_VRCUrlQueueHasValue, _QueueWriteHead, vRCUrlQueueHasValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+            Array.Copy(_VRCUrlQueueAction, 0, vRCUrlQueueAction, 0, _QueueWriteHead);
+            Array.Copy(_VRCUrlQueueAction, _QueueWriteHead, vRCUrlQueueAction, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+            Array.Copy(_VRCUrlQueueValue, 0, vRCUrlQueueValue, 0, _QueueWriteHead);
+            Array.Copy(_VRCUrlQueueValue, _QueueWriteHead, vRCUrlQueueValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+
+            _QueueHasValue = queueHasValue;
+            _QueueAction = queueAction;
+            _QueueValue = queueValue;
+            _VRCUrlQueueHasValue = vRCUrlQueueHasValue;
+            _VRCUrlQueueAction = vRCUrlQueueAction;
+            _VRCUrlQueueValue = vRCUrlQueueValue;
+
+            if (_QueueReadHead >= _QueueWriteHead)
+                _QueueReadHead += _QueueLength;
+            _QueueLength = queueLength;
+        }
     }
 }
