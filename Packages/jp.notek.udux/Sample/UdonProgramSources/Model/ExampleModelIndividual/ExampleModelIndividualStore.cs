@@ -62,8 +62,7 @@ namespace UduxSample
                     NewState.Value1 = true;
                     break;
                 case "OnTestActionB":
-                    NewState.Value2 = false;
-                    NewState.Value3 = false;
+                    NewState.Value2 = true;
                     GetMySyncState().ReflectLocalState(NewState);
                     break;
                 case "OnSubscribeUserChanged":
@@ -95,6 +94,8 @@ namespace UduxSample
             switch (action)
             {
                 case "OnTestActionC":
+                    NewState.Value3 = true;
+                    GetMySyncState().ReflectLocalState(NewState);
                     break;
                 default:
                     return;
