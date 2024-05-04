@@ -20,6 +20,7 @@ namespace JP.Notek.Udux
         int _QueueWriteHead = 0;
         protected bool _IsStateDistributing = false;
         protected int _StateDistributingI = 0;
+        protected bool _OmitDistribution = false;
 
         protected const string _OnOwnershipTransferredAction = "__INTERNAL__.OnOwnerShipTransferred";
         protected const string _OnSyncStateChangedAction = "__INTERNAL__.OnSyncStateChanged";
@@ -32,19 +33,23 @@ namespace JP.Notek.Udux
             if (_IsStateDistributing)
                 return;
 
-            if (_QueueHasValue[_QueueReadHead])
+            var nextHead = (_QueueReadHead + 1) % _QueueLength;
+            var queueHasValue = _QueueHasValue[_QueueReadHead];
+            var vRCUrlQueueHasValue = _VRCUrlQueueHasValue[_QueueReadHead];
+            if (queueHasValue || vRCUrlQueueHasValue)
             {
-                Reduce(_QueueAction[_QueueReadHead], _QueueValue[_QueueReadHead]);
-                _IsStateDistributing = true;
-                _QueueHasValue[_QueueReadHead] = false;
-                _QueueReadHead = (_QueueReadHead + 1) % _QueueLength;
-            }
-            else if (_VRCUrlQueueHasValue[_QueueReadHead])
-            {
-                Reduce(_VRCUrlQueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
-                _IsStateDistributing = true;
-                _VRCUrlQueueHasValue[_QueueReadHead] = false;
-                _QueueReadHead = (_QueueReadHead + 1) % _QueueLength;
+                if (queueHasValue)
+                {
+                    Reduce(_QueueAction[_QueueReadHead], _QueueValue[_QueueReadHead]);
+                    _QueueHasValue[_QueueReadHead] = false;
+                }
+                else if (vRCUrlQueueHasValue)
+                {
+                    Reduce(_VRCUrlQueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
+                    _VRCUrlQueueHasValue[_QueueReadHead] = false;
+                }
+                _IsStateDistributing = !_OmitDistribution || (!_QueueHasValue[nextHead] && !_VRCUrlQueueHasValue[nextHead]);
+                _QueueReadHead = nextHead;
             }
         }
 

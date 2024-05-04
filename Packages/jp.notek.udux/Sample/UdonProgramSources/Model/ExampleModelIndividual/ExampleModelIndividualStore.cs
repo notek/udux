@@ -18,6 +18,7 @@ namespace UduxSample
 
         public void Start()
         {
+            _OmitDistribution = true;
             _SyncStateProvider.Subscribe(this);
         }
 
