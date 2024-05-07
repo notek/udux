@@ -9,11 +9,10 @@ namespace JP.Notek.Udux
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class IReduceStore : UdonSharpBehaviour
     {
-        bool[] _QueueHasValue = new bool[32];
         string[] _QueueAction = new string[32];
+        bool[] _QueueHasValue = new bool[32];
         DataToken[] _QueueValue = new DataToken[32];
         bool[] _VRCUrlQueueHasValue = new bool[32];
-        string[] _VRCUrlQueueAction = new string[32];
         VRCUrl[] _VRCUrlQueueValue = new VRCUrl[32];
         int _QueueLength = 32;
         int _QueueReadHead = 0;
@@ -53,7 +52,7 @@ namespace JP.Notek.Udux
                 }
                 else if (vRCUrlQueueHasValue)
                 {
-                    Reduce(_VRCUrlQueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
+                    Reduce(_QueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
                     _VRCUrlQueueHasValue[_QueueReadHead] = false;
                 }
                 var nextHead = (_QueueReadHead + 1) % _QueueLength;
@@ -68,8 +67,8 @@ namespace JP.Notek.Udux
             {
                 RescaleQueue();
             }
-            _QueueHasValue[_QueueWriteHead] = true;
             _QueueAction[_QueueWriteHead] = action;
+            _QueueHasValue[_QueueWriteHead] = true;
             _QueueValue[_QueueWriteHead] = value;
             _QueueWriteHead = (_QueueWriteHead + 1) % _QueueLength;
         }
@@ -80,8 +79,8 @@ namespace JP.Notek.Udux
             {
                 RescaleQueue();
             }
+            _QueueAction[_QueueWriteHead] = action;
             _VRCUrlQueueHasValue[_QueueWriteHead] = true;
-            _VRCUrlQueueAction[_QueueWriteHead] = action;
             _VRCUrlQueueValue[_QueueWriteHead] = value;
             _QueueWriteHead = (_QueueWriteHead + 1) % _QueueLength;
         }
@@ -123,7 +122,6 @@ namespace JP.Notek.Udux
             _QueueAction = new string[queueLength];
             _QueueValue = new DataToken[queueLength];
             _VRCUrlQueueHasValue = new bool[queueLength];
-            _VRCUrlQueueAction = new string[queueLength];
             _VRCUrlQueueValue = new VRCUrl[queueLength];
 
             _QueueLength = queueLength;
@@ -133,23 +131,20 @@ namespace JP.Notek.Udux
         {
             int queueLength = _QueueLength * 2;
 
-            bool[] queueHasValue = new bool[queueLength];
             string[] queueAction = new string[queueLength];
+            bool[] queueHasValue = new bool[queueLength];
             DataToken[] queueValue = new DataToken[queueLength];
             bool[] vRCUrlQueueHasValue = new bool[queueLength];
-            string[] vRCUrlQueueAction = new string[queueLength];
             VRCUrl[] vRCUrlQueueValue = new VRCUrl[queueLength];
 
-            Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
-            Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
             Array.Copy(_QueueAction, 0, queueAction, 0, _QueueWriteHead);
             Array.Copy(_QueueAction, _QueueWriteHead, queueAction, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
+            Array.Copy(_QueueHasValue, 0, queueHasValue, 0, _QueueWriteHead);
+            Array.Copy(_QueueHasValue, _QueueWriteHead, queueHasValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
             Array.Copy(_QueueValue, 0, queueValue, 0, _QueueWriteHead);
             Array.Copy(_QueueValue, _QueueWriteHead, queueValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
             Array.Copy(_VRCUrlQueueHasValue, 0, vRCUrlQueueHasValue, 0, _QueueWriteHead);
             Array.Copy(_VRCUrlQueueHasValue, _QueueWriteHead, vRCUrlQueueHasValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
-            Array.Copy(_VRCUrlQueueAction, 0, vRCUrlQueueAction, 0, _QueueWriteHead);
-            Array.Copy(_VRCUrlQueueAction, _QueueWriteHead, vRCUrlQueueAction, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
             Array.Copy(_VRCUrlQueueValue, 0, vRCUrlQueueValue, 0, _QueueWriteHead);
             Array.Copy(_VRCUrlQueueValue, _QueueWriteHead, vRCUrlQueueValue, _QueueWriteHead + _QueueLength, _QueueLength - _QueueWriteHead);
 
@@ -157,7 +152,6 @@ namespace JP.Notek.Udux
             _QueueAction = queueAction;
             _QueueValue = queueValue;
             _VRCUrlQueueHasValue = vRCUrlQueueHasValue;
-            _VRCUrlQueueAction = vRCUrlQueueAction;
             _VRCUrlQueueValue = vRCUrlQueueValue;
 
             if (_QueueReadHead >= _QueueWriteHead)
