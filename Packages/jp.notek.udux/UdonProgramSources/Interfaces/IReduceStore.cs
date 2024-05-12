@@ -17,15 +17,17 @@ namespace JP.Notek.Udux
         int _QueueLength = 32;
         int _QueueReadHead = 0;
         int _QueueWriteHead = 0;
-        protected bool _IsStateDistributing = false;
+        protected bool _IsStateDistributing = true;
         protected int _StateDistributingI = 0;
 
         // 値変更の配布をスキップ可能にする
-        protected bool _OmitDistribution = false;
+        protected bool _OmitDistribution = true;
 
-        // _OmitDistribution == trueのとき1フレームで処理するイベントの数。
-        //Reduceの処理量が多い場合この数値が大きいとfps低下を招く。この数値が小さいと処理の遅延が大きくなる。
-        protected int _ProcessingUnit = 32;
+        // _OmitDistribution == trueのとき適用される設定
+        // 現在のfpsがこの数字より低い場合、イベント処理を抑える。
+        protected float _MinFPS = 15;
+        // Reduceの処理時間が下記より長い場合、イベント処理を抑える。
+        protected float _UpdateMaxPeriodMS = 8;
 
         protected const string _OnOwnershipTransferredAction = "__INTERNAL__.OnOwnerShipTransferred";
         protected const string _OnSyncStateChangedAction = "__INTERNAL__.OnSyncStateChanged";
@@ -38,7 +40,9 @@ namespace JP.Notek.Udux
             if (_IsStateDistributing)
                 return;
 
-            for (int i = 0; i < (_OmitDistribution ? _ProcessingUnit : 1); i++)
+            var period = Time.realtimeSinceStartup;
+
+            while (!_IsStateDistributing)
             {
                 var queueHasValue = _QueueHasValue[_QueueReadHead];
                 var vRCUrlQueueHasValue = _VRCUrlQueueHasValue[_QueueReadHead];
@@ -56,7 +60,28 @@ namespace JP.Notek.Udux
                     _VRCUrlQueueHasValue[_QueueReadHead] = false;
                 }
                 var nextHead = (_QueueReadHead + 1) % _QueueLength;
-                _IsStateDistributing = !_OmitDistribution || (!_QueueHasValue[nextHead] && !_VRCUrlQueueHasValue[nextHead]);
+                if (_OmitDistribution)
+                {
+                    if (Time.deltaTime > 1f / _MinFPS)
+                    {
+                        _IsStateDistributing = true;
+                    }
+                    else
+                    {
+                        if ((Time.realtimeSinceStartup - period) > (_UpdateMaxPeriodMS / 1000f))
+                        {
+                            _IsStateDistributing = true;
+                        }
+                        else
+                        {
+                            _IsStateDistributing = !_QueueHasValue[nextHead] && !_VRCUrlQueueHasValue[nextHead];
+                        }
+                    }
+                }
+                else
+                {
+                    _IsStateDistributing = true;
+                }
                 _QueueReadHead = nextHead;
             }
         }

@@ -34,9 +34,7 @@ namespace UduxSample
         }
         public void OnButtonEventMixPressed()
         {
-            _Dispatcher.OnTestActionA();
-            _Dispatcher.OnTestActionB();
-            _Dispatcher.OnTestActionC();
+            for(int i=0;i<100;i++){
             _Dispatcher.OnTestActionD();
             _Dispatcher.OnTestActionA();
             _Dispatcher.OnTestActionB();
@@ -50,6 +48,11 @@ namespace UduxSample
             _Dispatcher.OnTestActionB();
             _Dispatcher.OnTestActionC();
             _Dispatcher.OnTestActionD();
+            _Dispatcher.OnTestActionA();
+            _Dispatcher.OnTestActionB();
+            _Dispatcher.OnTestActionC();
+            _Dispatcher.OnTestActionD();
+            }
 
             _Dispatcher.OnTestActionA();
             _Dispatcher.OnTestActionC();

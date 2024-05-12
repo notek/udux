@@ -18,8 +18,8 @@ namespace UduxSample
 
         public void Start()
         {
-            _OmitDistribution = true;
-            _ProcessingUnit = 64;
+            // _MinFPS = 60;
+            // _UpdateMaxPeriodMS = 5;
             InitQueue(128);
             _SyncStateProvider.Subscribe(this);
         }
