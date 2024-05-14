@@ -19,7 +19,6 @@ namespace JP.Notek.Udux
             }
         }
 
-        // エラー回避不可
         public static void OnChange<SyncModelT, SyncCurrentStateT, SyncNewStateT, StoreT>(this SyncStateAdapterBase<SyncModelT, SyncCurrentStateT, SyncNewStateT, StoreT> instance)
             where SyncModelT : IState
             where SyncCurrentStateT : SyncModelT

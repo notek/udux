@@ -34,7 +34,6 @@ namespace JP.Notek.Udux
         public virtual void DispatchOnChanged() { }
 
 
-        // エラー回避不可のため継承先で直接実装
         public override void OnChange(SyncModelT currentState, SyncModelT newState)
         {
             SyncStateAdapterBaseFunctions.OnChange(this);
