@@ -28,6 +28,9 @@ namespace JP.Notek.Udux
             var requestId = instance.GetRequestId();
             if(requestId == -1)
                 return;
+            if(requestId == instance._LastRequestId)
+                return;
+            instance._LastRequestId = requestId;
             if (!instance.GetIsOwner())
                 instance.TakeOwnership();
             instance.ReflectSyncState();

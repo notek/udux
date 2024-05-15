@@ -21,6 +21,7 @@ namespace JP.Notek.Udux
         [UdonSynced] public float _SyncTimeId;
         public float OwnerTimeDifference = float.PositiveInfinity;
         public float _SyncTimeIdLocal;
+        public float _LastRequestId = -1;
         public int _LatencySyncedFrame = 0;
 
         void Start()
