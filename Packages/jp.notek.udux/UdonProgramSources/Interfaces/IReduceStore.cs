@@ -10,7 +10,6 @@ namespace JP.Notek.Udux
     public class IReduceStore : UdonSharpBehaviour
     {
         public bool IsStateDistributing = true;
-        public string PrivateActionPrefix;
         public virtual void Reduce(string action, DataToken value) { }
         public virtual void Reduce(string action, VRCUrl value) { }
     }

@@ -56,8 +56,7 @@ namespace JP.Notek.Udux
                 {
                     foreach (var store in _Stores)
                     {
-                        var action = _QueueAction[_QueueReadHead].Replace(store.PrivateActionPrefix, "");
-                        store.Reduce(action, _QueueValue[_QueueReadHead]);
+                        store.Reduce(_QueueAction[_QueueReadHead], _QueueValue[_QueueReadHead]);
                         changed = true;
                     }
                     _QueueHasValue[_QueueReadHead] = false;
@@ -66,8 +65,7 @@ namespace JP.Notek.Udux
                 {
                     foreach (var store in _Stores)
                     {
-                        var action = _QueueAction[_QueueReadHead].Replace(store.PrivateActionPrefix, "");
-                        store.Reduce(action, _VRCUrlQueueValue[_QueueReadHead]);
+                        store.Reduce(_QueueAction[_QueueReadHead], _VRCUrlQueueValue[_QueueReadHead]);
                         changed = true;
                     }
                     _VRCUrlQueueHasValue[_QueueReadHead] = false;
@@ -113,14 +111,6 @@ namespace JP.Notek.Udux
         public void Dispatch(string action, VRCUrl url)
         {
             AddQueue(action, url);
-        }
-        public void DispatchPrivate(IReduceStore store, string action, DataToken value = new DataToken())
-        {
-            AddQueue($"{store.PrivateActionPrefix}{action}", value);
-        }
-        public void DispatchPrivate(IReduceStore store, string action, VRCUrl url)
-        {
-            AddQueue($"{store.PrivateActionPrefix}{action}", url);
         }
 
         void AddQueue(string action, DataToken value)

@@ -10,7 +10,6 @@ namespace JP.Notek.Udux
             where CurrentStateT : ModelT
             where NewStateT : ModelT
         {
-            instance.PrivateActionPrefix = Guid.NewGuid().ToString();
             instance._Dispatcher.RegisterStore(instance);
         }
         public static void SubscribeOnChange<ModelT, CurrentStateT, NewStateT>(this ReduceStoreBase<ModelT, CurrentStateT, NewStateT> instance, IStoreObservable<ModelT> view)

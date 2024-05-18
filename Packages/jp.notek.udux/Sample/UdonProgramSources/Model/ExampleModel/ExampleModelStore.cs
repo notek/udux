@@ -31,13 +31,13 @@ namespace UduxSample
                     NewState.SyncRequestId = UnityEngine.Random.value;
                     NewState.ReqValue2 = true;
                     break;
-                case SyncStateActions.ON_REQUEST_SUCCESS_ACTION:
+                case ExampleModelSyncAdapter.ON_REQUEST_SUCCEED_ACTION:
 
                     var requestId = (float)value.DataDictionary["request_id"];
                     if(requestId == NewState.SyncRequestId)
                         NewState.SyncRequestId = -1;
                     break;
-                case SyncStateActions.ON_CHANGED_ACTION:
+                case ExampleModelSyncAdapter.ON_CHANGED_ACTION:
                     NewState.Value2 = (bool)value.DataDictionary["Value2"];
                     NewState.Value3 = (bool)value.DataDictionary["Value3"];
                     NewState.OwnerTimeDifference = (float)value.DataDictionary["OwnerTimeDifference"];
