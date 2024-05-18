@@ -15,6 +15,7 @@ namespace UduxSample
         void Start()
         {
             _Store.SubscribeOnChange(this);
+            OnChange(null, _Store.NewState);
         }
 
         public override void OnChange(ExampleModel currentState, ExampleModel newState)

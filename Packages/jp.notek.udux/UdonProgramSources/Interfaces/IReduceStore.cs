@@ -9,7 +9,7 @@ namespace JP.Notek.Udux
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class IReduceStore : UdonSharpBehaviour
     {
-        public bool IsStateDistributing = true;
+        public bool IsStateDistributing = false;
         public virtual void Reduce(string action, DataToken value) { }
         public virtual void Reduce(string action, VRCUrl value) { }
     }

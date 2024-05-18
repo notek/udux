@@ -139,7 +139,6 @@ namespace JP.Notek.Udux
 
         void InitQueue(int queueLength)
         {
-            Debug.Log("init");
             _QueueHasValue = new bool[queueLength];
             _QueueAction = new string[queueLength];
             _QueueValue = new DataToken[queueLength];
