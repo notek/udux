@@ -1050,6 +1050,7 @@ MonoBehaviour:
   m_Script: {fileID: -1533785930, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AllowFocusView: 1
 --- !u!1 &631484182
 GameObject:
   m_ObjectHideFlags: 0
@@ -1872,7 +1873,6 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 940828408}
   IsStateDistributing: 1
-  PrivateActionPrefix: 
   _Dispatcher: {fileID: 258347354}
   NewState: {fileID: 940828405}
   _CurrentState: {fileID: 940828407}
@@ -2547,7 +2547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchedFromSDKPipeline: 0
   completedSDKPipeline: 0
-  blueprintId: wrld_f45f42ef-e768-449d-bf8d-06b8386e8d92
+  blueprintId: 
   contentType: 1
   assetBundleUnityVersion: 
   fallbackStatus: 0
