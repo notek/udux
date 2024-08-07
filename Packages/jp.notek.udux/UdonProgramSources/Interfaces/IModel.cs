@@ -3,9 +3,8 @@ using UdonSharp;
 namespace JP.Notek.Udux
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class IModel<SyncStateT> : UdonSharpBehaviour
-    where SyncStateT : ISyncState
+    public class IState : UdonSharpBehaviour
     {
-        public virtual void ReflectSyncState(SyncStateT state) { }
+        // public virtual void UpdateState(IState newState) { }
     }
 }

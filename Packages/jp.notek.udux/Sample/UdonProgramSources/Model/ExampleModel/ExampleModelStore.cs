@@ -8,41 +8,16 @@ namespace UduxSample
 {
     [RequireComponent(typeof(ExampleModelCurrentState))]
     [RequireComponent(typeof(ExampleModelNewState))]
-    public class ExampleModelStore : ReduceStoreBase<ExampleModel, ExampleModelCurrentState, ExampleModelNewState, ExampleModelSyncState>
+    public class ExampleModelStore : ReduceStoreBase<ExampleModel, ExampleModelCurrentState, ExampleModelNewState>
     {
-        protected override void Reset()
+        public override void UpdateState()
         {
-            NewState = GetComponent<ExampleModelNewState>();
-            _CurrentState = GetComponent<ExampleModelCurrentState>();
+            _CurrentState.UpdateState(NewState);
         }
 
-        public void Start()
+        public override void ViewOnChange(IStoreObservable<ExampleModel> view)
         {
-            _SyncState.Subscribe(this);
-        }
-
-        public override void SubscribeOnChange(IStoreObservable<ExampleModel> view)
-        {
-            Views = Views.Add(view);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            if (_IsStateDistributing)
-            {
-                if (Views.Length <= _StateDistributingI)
-                {
-                    _CurrentState.UpdateState(NewState);
-                    _IsStateDistributing = false;
-                    _StateDistributingI = 0;
-                }
-                else
-                {
-                    Views[_StateDistributingI++].OnChange(_CurrentState, NewState);
-                }
-            }
+            view.OnChange(_CurrentState, NewState);
         }
 
         public override void Reduce(string action, DataToken value)
@@ -53,31 +28,38 @@ namespace UduxSample
                     NewState.Value1 = true;
                     break;
                 case "OnTestActionB":
-                    NewState.Value2 = false;
-                    NewState.Value3 = false;
-                    _SyncState.ReflectLocalState(NewState);
+                    NewState.SyncRequestId = UnityEngine.Random.value;
+                    NewState.ReqValue2 = true;
                     break;
-                case "OnOwnershipRequested":
-                    _SyncState.TakeOwnership();
-                    _SyncState.SetOwnerTimeDifference();
-                    NewState.OwnerTimeDifference = _SyncState.RequestSerialization();
+                case ExampleModelSyncAdapter.ON_REQUEST_SUCCEED_ACTION:
+
+                    var requestId = (float)value.DataDictionary["request_id"];
+                    if(requestId == NewState.SyncRequestId)
+                        NewState.SyncRequestId = -1;
                     break;
-                case _OnOwnershipTransferredAction:
-                    _SyncState.SetOwnerTimeDifference();
-                    NewState.OwnerTimeDifference = _SyncState.RequestSerialization();
-                    break;
-                case _OnSyncStateChangedAction:
-                    NewState.ReflectSyncState(_SyncState);
+                case ExampleModelSyncAdapter.ON_CHANGED_ACTION:
+                    NewState.Value2 = (bool)value.DataDictionary["Value2"];
+                    NewState.Value3 = (bool)value.DataDictionary["Value3"];
+                    NewState.OwnerTimeDifference = (float)value.DataDictionary["OwnerTimeDifference"];
                     break;
                 default:
                     return;
             }
         }
+
         public override void Reduce(string action, VRCUrl value)
         {
             switch (action)
             {
                 case "OnTestActionC":
+                    NewState.SyncRequestId = UnityEngine.Random.value;
+                    NewState.ReqValue3 = true;
+                    break;
+                case "OnTestActionD":
+                    NewState.SyncRequestId = UnityEngine.Random.value;
+                    NewState.Value1 = false;
+                    NewState.ReqValue2 = false;
+                    NewState.ReqValue3 = false;
                     break;
                 default:
                     return;

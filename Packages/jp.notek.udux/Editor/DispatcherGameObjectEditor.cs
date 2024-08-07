@@ -5,7 +5,7 @@ namespace JP.Notek.Udux.Editor
 {
     public class DispatcherGameObjectEditor
     {
-        [MenuItem("GameObject/Udux/Dispatcher", false, 10)]
+        [MenuItem("GameObject/Notek/Udux/Dispatcher", false, 10)]
         private static void Create()
         {
             var prefab = Resources.Load<GameObject>("Dispatcher");
